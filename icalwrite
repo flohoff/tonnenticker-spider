@@ -21,6 +21,7 @@ sub icaladd {
 	my $event = Data::ICal::Entry::Event->new();
 	$event->add_properties(
 		uid		=> sprintf('%s-%s-%s@tonnenticker', $year, $month, $day),
+		sequence	=> 0,
 		summary		=> $what,
 		description	=> $what,
 		dtstamp		=> [ strftime("%Y%m%dT%H%M%S", localtime(time())), { TZID => 'Europe/Berlin' } ],
