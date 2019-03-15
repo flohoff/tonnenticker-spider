@@ -8,13 +8,13 @@ Kreis Gütersloh mbH (GEG)
 https://play.google.com/store/apps/details?id=de.regioit.abfallapp.tonnentickerpro&hl=de
 
 Leider ist diese App seit Jahren eher unzureichend wie man auch an den äusserst
-mangelhaften Bewertungen sieht. So gibt es Haufenweise Beschwerden das
+mangelhaften Bewertungen sieht. So gibt es haufenweise Beschwerden das
 Benachrichtigungen nicht funktionieren. Zum anderen kann man nur einen Standort
 anlegen. 
 
 Leider stellen sowohl GEG wie auch AWG die Rohdaten der Abfuhrtermine nicht zur
 Verfügung. Meine Anfrage diesbezüglich wurde mehrfach im Kreis geschickt und
-blieb bisher Erfolglos. 
+blieb bisher erfolglos. 
 
 spider
 ------
@@ -30,7 +30,23 @@ Genutzte URLs:
 	https://krwaf-abfallapp.regioit.de/abfall-app-krwaf/rest/orte/${ortid}/strassen
 	https://krwaf-abfallapp.regioit.de/abfall-app-krwaf/rest/strassen/${strassenid}/termine
 
-Der Spider legt ein Verzeichnis mit dem Aktuellen Datenstand aus dem im
+Der Spider legt ein Verzeichnis mit dem aktuellen Datenstand aus dem im
 appdata json zurückgeliefertem lastImport timestamp.
 
+
+icalwrite
+---------
+
+icalwrite erzeugt für einen Ort und eine Straße ein ICAL file (ics) das in Handelsüblichen
+Kalenderapplikationen importiert werden kann. Getests mit Mozilla Thunderbird/Sunbird.
+
+Google Calendar import geht gerade noch nicht. 
+
+	./icalwrite -d 11.03.2019_14\:12\:32 -o Herzebrock-Clarholz -s Kleikamp
+
+Anschliessend liegt im aktuellen Verzeichniss ein
+
+	Herzebrock-Clarholz-Kleikamp.ics	
+
+Es fehlt noch Einschränkungen auf die Tonnen.
 

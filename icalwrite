@@ -1,0 +1,115 @@
+#!/usr/bin/perl
+
+use strict;
+
+use Data::Dumper;
+use Date::Calc qw/Add_Delta_Days/;
+use JSON;
+use Carp;
+use Getopt::Long::Descriptive;
+use Data::ICal;
+use Data::ICal::Entry::Event;
+use File::Slurp;
+
+sub icaladd {
+	my ($calendar, $datum, $what) = @_;
+
+	my ($year, $month, $day) = split(/-/, $datum, 3);
+	my ($nyear, $nmonth, $nday) = Add_Delta_Days($year,$month,$day,1);
+
+	my $event = Data::ICal::Entry::Event->new();
+	$event->add_properties(
+	    summary     => $what,
+	    description => $what,
+	    dtstart     => join("", $year, $month, $day),
+	    dtend       => join("", $nyear, $nmonth, $nday),
+	);
+
+	$calendar->add_entry($event);
+}
+
+sub findort {
+	my ($datadir, $ortname) = @_;
+	
+	my $orte=from_json(read_file($datadir . "/orte.js"));
+
+	my @ort=grep { $_->{name} eq $ortname } @{$orte};
+
+	return scalar @ort ? $ort[0] : undef;
+}
+
+sub readfraktion {
+	my ($datadir) = @_;
+
+	my $frakfilename=sprintf("%s/fraktionen.js", $datadir);
+	return from_json(read_file($frakfilename));
+}
+
+sub ffraktion {
+	my ($fraktionen, $termin) = @_;
+
+	my $id=$termin->{bezirk}{fraktionId};
+
+	my @match=grep { $_->{id} eq $id } @{$fraktionen};
+
+	return undef if (scalar @match <= 0);
+
+	return $match[0]->{name};
+}
+
+
+sub findstrasse {
+	my ($datadir, $ort, $strassenname) = @_;
+
+	my $strassenfilename=sprintf("%s/%s-strassen.js",
+		$datadir, $ort->{id});
+	my $strassen=from_json(read_file($strassenfilename));
+
+	my @strassen=grep { $_->{name} eq $strassenname } @{$strassen};
+
+	return undef if (scalar @strassen <= 0);
+	my $strasse=$strassen[0];
+
+	my $terminefilename=sprintf("%s/%s/%s.js",
+		$datadir, $ort->{id}, $strasse->{id});
+
+	my $termine=from_json(read_file($terminefilename));
+	my $fraktion=readfraktion($datadir);
+
+	my @entries=map { my $f=ffraktion($fraktion, $_); { id => $_->{id}, datum => $_->{datum}, name => $f }; }  @{$termine};
+
+	return \@entries;
+}
+
+my ($opt, $usage) = describe_options(
+	'icalwrite %o <some-arg>',
+	[ 'datadir|d=s',	"Socket path", { default => "lastimport" } ],
+	[ 'ort|o=s',		"Ort" ],
+	[ 'strasse|s=s',	"Straße" ],
+	[],
+	[ 'help',               "print usage message and exit", { shortcircuit => 1 } ],
+	{ show_defaults => 1 }
+);
+
+print($usage->text), exit if $opt->help;
+
+my $ort=findort($opt->datadir, $opt->ort);
+
+confess("Could not find " . $opt->ort) unless defined($ort);
+
+my $termine=findstrasse($opt->datadir, $ort, $opt->strasse);
+
+my $calendar = Data::ICal->new();
+
+my $unified={};
+foreach my $termin ( @{$termine} ) {
+	$unified->{$termin->{datum}}{$termin->{name}}++;
+}
+
+foreach my $datum ( sort keys %{$unified} ) {
+	my $what=join(", ", keys %{$unified->{$datum}});
+	icaladd($calendar, $datum, $what);
+}
+
+my $icsfilename=sprintf("%s-%s.ics", $opt->ort, $opt->strasse);
+write_file($icsfilename, $calendar->as_string);
