@@ -7,10 +7,11 @@ Kreis Gütersloh mbH (GEG)
 
 https://play.google.com/store/apps/details?id=de.regioit.abfallapp.tonnentickerpro&hl=de
 
-Leider ist diese App seit Jahren eher unzureichend wie man auch an den äusserst
-mangelhaften Bewertungen sieht. So gibt es haufenweise Beschwerden das
-Benachrichtigungen nicht funktionieren. Zum anderen kann man nur einen Standort
-anlegen. 
+Leider war die Vorgänger App schon unzureichend und die neuerstellung
+durch die RegioIT hat die Designprobleme des Vorgängers übernommen.
+
+Die Bewertungen im PlayStore sprechen ihre eigene Sprache. Ich selber habe
+die Benachrichtigungen nie ans laufen bekommen.
 
 Leider stellen sowohl GEG wie auch AWG die Rohdaten der Abfuhrtermine nicht zur
 Verfügung. Meine Anfrage diesbezüglich wurde mehrfach im Kreis geschickt und
