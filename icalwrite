@@ -5,6 +5,7 @@ use strict;
 use Data::Dumper;
 use Date::Calc qw/Add_Delta_Days/;
 use JSON;
+use POSIX;
 use Carp;
 use Getopt::Long::Descriptive;
 use Data::ICal;
@@ -19,10 +20,12 @@ sub icaladd {
 
 	my $event = Data::ICal::Entry::Event->new();
 	$event->add_properties(
-	    summary     => $what,
-	    description => $what,
-	    dtstart     => join("", $year, $month, $day),
-	    dtend       => join("", $nyear, $nmonth, $nday),
+		uid		=> sprintf('%s-%s-%s@tonnenticker', $year, $month, $day),
+		summary		=> $what,
+		description	=> $what,
+		dtstamp		=> [ strftime("%Y%m%dT%H%M%S", localtime(time())), { TZID => 'Europe/Berlin' } ],
+		dtstart		=> sprintf("%4s%02s%02s", $year, $month, $day),
+		dtend		=> sprintf("%4s%02s%02s", $nyear, $nmonth, $nday),
 	);
 
 	$calendar->add_entry($event);
