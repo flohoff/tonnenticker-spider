@@ -41,8 +41,6 @@ icalwrite
 icalwrite erzeugt für einen Ort und eine Straße ein ICAL file (ics) das in Handelsüblichen
 Kalenderapplikationen importiert werden kann. Getests mit Mozilla Thunderbird/Sunbird.
 
-Google Calendar import geht gerade noch nicht. 
-
 	./icalwrite -d 11.03.2019_14\:12\:32 -o Herzebrock-Clarholz -s Kleikamp
 
 Anschliessend liegt im aktuellen Verzeichniss ein
@@ -50,4 +48,7 @@ Anschliessend liegt im aktuellen Verzeichniss ein
 	Herzebrock-Clarholz-Kleikamp.ics	
 
 Es fehlt noch Einschränkungen auf die Tonnen.
+
+Wenn man dieses ics file auf einen Webserver legt dann kann man Anschliessend dieses
+in den Google Kalender hinzufügen.
 
