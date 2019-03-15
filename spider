@@ -1,8 +1,10 @@
 #!/usr/bin/perl -w
 
+use strict;
 use JSON;
 use LWP::UserAgent;
 use Data::Dumper;
+use File::Slurp;
 use HTTP::Request::Common;
 
 my $ua;
@@ -21,6 +23,67 @@ sub getappdata {
 	return request("/rest/appdata");	
 }
 
+sub dirnamefromappdata {
+	my ($appdata) = @_;
+
+	my $name=$appdata->{lastImport};
+	$name =~ s/[^a-zA-Z0-9.:-]/_/g;
+
+	return $name;
+}
+
+sub fetchort {
+	my ($dirname, $ort) = @_;
+
+	next if ($ort->{id} eq '');
+
+	my $file=$dirname . "/" . $ort->{id} . "-strassen.js";
+
+	fetchandstore("/rest/orte/" . $ort->{id} . "/strassen", $file);
+
+	my $dir=$dirname . "/" . $ort->{id};
+	mkdir $dir;
+
+	my $strassen=from_json(read_file($file));
+
+	foreach my $strasse ( @{$strassen} ) {
+		# /rest/orte/2483432/strassen
+		fetchandstore("/rest/strassen/" . $strasse->{id} . "/termine",
+			$dir . "/" . $strasse->{id} . ".js");
+	}
+}
+
+sub fetchandstore {
+	my ($url, $filename) = @_;
+
+	printf("Fetching %s - storing to %s\n", $url, $filename);
+
+	my $data=request($url);
+	write_file($filename, $data);
+}
+
 $ua=new LWP::UserAgent;
 
-print getappdata();
+my $appdatastring=getappdata();
+confess("Could not get appdata") unless defined($appdatastring);
+
+my $appdata=from_json($appdatastring);
+confess("No lastImport in appdata") unless defined($appdata->{lastImport});
+
+my $dirname=dirnamefromappdata($appdata);
+
+if ( -d $dirname ) {
+	#	confess("We already have this data version");
+}
+mkdir($dirname);
+
+write_file($dirname . "/appdata.js", $appdatastring);
+
+fetchandstore("/rest/fraktionen", $dirname . "/fraktionen.js");
+fetchandstore("/rest/orte", $dirname . "/orte.js");
+
+
+my $orte=from_json(read_file($dirname . "/orte.js"));
+foreach my $ort ( @{$orte} ) {
+	fetchort($dirname, $ort);	
+}
