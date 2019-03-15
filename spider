@@ -1,0 +1,26 @@
+#!/usr/bin/perl -w
+
+use JSON;
+use LWP::UserAgent;
+use Data::Dumper;
+use HTTP::Request::Common;
+
+my $ua;
+
+my $baseurl="https://krwaf-abfallapp.regioit.de/abfall-app-krwaf";
+
+sub request {
+	my $req=GET $baseurl . join("", @_);
+	my $response=$ua->request($req);
+
+	return undef if (!$response->is_success);
+	return $response->decoded_content();
+}
+
+sub getappdata {
+	return request("/rest/appdata");	
+}
+
+$ua=new LWP::UserAgent;
+
+print getappdata();
