@@ -73,7 +73,7 @@ confess("No lastImport in appdata") unless defined($appdata->{lastImport});
 my $dirname=dirnamefromappdata($appdata);
 
 if ( -d $dirname ) {
-	#	confess("We already have this data version");
+	confess("We already have this data version");
 }
 mkdir($dirname);
 
