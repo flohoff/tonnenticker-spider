@@ -2,6 +2,7 @@
 
 use strict;
 use JSON;
+use Carp qw/confess/;
 use LWP::UserAgent;
 use Data::Dumper;
 use File::Slurp;
