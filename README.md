@@ -52,3 +52,11 @@ Es fehlt noch Einschränkungen auf die Tonnen.
 Wenn man dieses ics file auf einen Webserver legt dann kann man Anschliessend dieses
 in den Google Kalender hinzufügen.
 
+
+Installation
+============
+
+Auf Debian/Ubuntu basierten Systemen bedarf es einiger Perl module:
+
+	apt-get -fuy install libjson-perl libwww-perl libfile-slurp-perl
+
