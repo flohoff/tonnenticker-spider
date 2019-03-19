@@ -82,7 +82,7 @@ write_file($dirname . "/appdata.js", $appdatastring);
 
 fetchandstore("/rest/fraktionen", $dirname . "/fraktionen.js");
 fetchandstore("/rest/orte", $dirname . "/orte.js");
-
+fetchandstore("/rest/bezirke", $dirname . "/bezirke.js");
 
 my $orte=from_json(read_file($dirname . "/orte.js"));
 foreach my $ort ( @{$orte} ) {
